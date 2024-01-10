@@ -2,8 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
+	"github.com/go-chi/chi/v5"
 	"io"
 	"log"
+	"net/http"
 	"os"
 )
 
@@ -46,4 +49,21 @@ func main() {
 
 	jsonFile.Close()
 
+	// Server
+	rt := chi.NewRouter()
+
+	// Endpoints
+	rt.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, err := w.Write([]byte("pong"))
+
+		if err != nil {
+			panic(err)
+		}
+	})
+
+	fmt.Println("Server is starting...")
+	if err := http.ListenAndServe(":8080", rt); err != nil {
+		panic(err)
+	}
 }
