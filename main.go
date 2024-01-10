@@ -20,10 +20,6 @@ type Product struct {
 	Price       float64 `json:"price"`
 }
 
-type Products struct {
-	Products []Product `json:"products"`
-}
-
 func main() {
 	jsonFile, err := os.Open("data/products.json")
 
@@ -38,7 +34,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// var products Products
 	var products []Product
 
 	err = json.Unmarshal(byteValue, &products)
@@ -56,6 +51,17 @@ func main() {
 	rt.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		_, err := w.Write([]byte("pong"))
+
+		if err != nil {
+			panic(err)
+		}
+	})
+
+	rt.Get("/products", func(w http.ResponseWriter, r *http.Request) {
+		code := http.StatusOK
+		w.WriteHeader(code)
+		w.Header().Add("Content-Type", "application/json")
+		err := json.NewEncoder(w).Encode(products)
 
 		if err != nil {
 			panic(err)
