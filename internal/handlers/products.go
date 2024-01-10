@@ -3,21 +3,12 @@ package handlers
 import (
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
+	"go-web-bootcamp/internal"
 	"net/http"
 	"strconv"
 )
 
-type Product struct {
-	Id          int     `json:"id"`
-	Name        string  `json:"name"`
-	Quantity    int     `json:"quantity"`
-	CodeValue   string  `json:"code_value"`
-	IsPublished bool    `json:"is_published"`
-	Expiration  string  `json:"expiration"`
-	Price       float64 `json:"price"`
-}
-
-var products []Product
+var products []internal.Product
 
 func GetProducts() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -79,7 +70,7 @@ func GetProductByPrice() http.HandlerFunc {
 			panic(err)
 		}
 
-		var queryProducts []Product
+		var queryProducts []internal.Product
 
 		for _, p := range products {
 			if p.Price > priceF {
