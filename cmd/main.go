@@ -1,9 +1,9 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/go-chi/chi/v5"
+	"go-web-bootcamp/internal/handlers"
 	"io"
 	"log"
 	"net/http"
@@ -34,13 +34,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	var products []Product
-
-	err = json.Unmarshal(byteValue, &products)
-
-	if err != nil {
-		log.Fatal(err)
-	}
+	err = handlers.LoadProducts(byteValue)
 
 	jsonFile.Close()
 
@@ -48,27 +42,13 @@ func main() {
 	rt := chi.NewRouter()
 
 	// Endpoints
-	rt.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		_, err := w.Write([]byte("pong"))
+	rt.Get("/ping", handlers.Ping())
 
-		if err != nil {
-			panic(err)
-		}
-	})
+	rt.Get("/products", handlers.GetProducts())
+	rt.Get("/products/{id}", handlers.GetProductById())
+	rt.Get("/products/search", handlers.GetProductByPrice())
 
-	rt.Get("/products", func(w http.ResponseWriter, r *http.Request) {
-		code := http.StatusOK
-		w.WriteHeader(code)
-		w.Header().Add("Content-Type", "application/json")
-		err := json.NewEncoder(w).Encode(products)
-
-		if err != nil {
-			panic(err)
-		}
-	})
-
-	fmt.Println("Server is starting...")
+	fmt.Println("Server is running...")
 	if err := http.ListenAndServe(":8080", rt); err != nil {
 		panic(err)
 	}
