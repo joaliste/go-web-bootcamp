@@ -34,7 +34,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = handlers.LoadProducts(byteValue)
+	// Handler
+	hd, err := handlers.NewDefaultProducts(byteValue)
 
 	jsonFile.Close()
 
@@ -42,14 +43,17 @@ func main() {
 	rt := chi.NewRouter()
 
 	// Endpoints
-	rt.Get("/ping", handlers.Ping())
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	rt.Get("/products", handlers.GetProducts())
-	rt.Get("/products/{id}", handlers.GetProductById())
-	rt.Get("/products/search", handlers.GetProductByPrice())
+	rt.Get("/ping", hd.Ping())
+	rt.Get("/products", hd.GetProducts())
+	rt.Get("/products/{id}", hd.GetProductById())
+	rt.Get("/products/search", hd.GetProductByPrice())
 
 	fmt.Println("Server is running...")
 	if err := http.ListenAndServe(":8080", rt); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }
