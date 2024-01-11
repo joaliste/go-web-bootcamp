@@ -59,6 +59,7 @@ func (s *ServerChi) Run() error {
 	// Endpoints
 	rt.Get("/ping", hd.Ping())
 	rt.Get("/products", hd.GetProducts())
+	rt.Post("/products", hd.Create())
 	rt.Get("/products/{id}", hd.GetProductById())
 	rt.Get("/products/search", hd.GetProductByPrice())
 
