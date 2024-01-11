@@ -11,23 +11,26 @@ import (
 	"time"
 )
 
-var products []internal.Product
-
 type DefaultProducts struct {
-	products []internal.Product
+	products map[int]internal.Product
 	lastID   int
 }
 
 func NewDefaultProducts(p []byte) (*DefaultProducts, error) {
 	var products []internal.Product
 	err := json.Unmarshal(p, &products)
+	productsMap := make(map[int]internal.Product)
+
+	for _, value := range products {
+		productsMap[value.Id] = value
+	}
 
 	if err != nil {
 		return nil, err
 	}
 
 	return &DefaultProducts{
-		products: products,
+		products: productsMap,
 		lastID:   len(products),
 	}, nil
 }
@@ -82,7 +85,7 @@ func (d *DefaultProducts) GetProductById() http.HandlerFunc {
 			return
 		}
 
-		product := d.products[id-1]
+		product := d.products[id]
 
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
@@ -172,7 +175,7 @@ func (d *DefaultProducts) Create() http.HandlerFunc {
 		product.Id = d.lastID
 
 		// - store product
-		d.products = append(d.products, product)
+		d.products[d.lastID] = product
 
 		// response
 		w.Header().Set("Content-Type", "application/json")
