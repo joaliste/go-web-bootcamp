@@ -10,26 +10,26 @@ import (
 	"os"
 )
 
-func NewServerChi(address string) *ServerChi {
+func NewDefaultHTTP(address string) *DefaultHTTP {
 	// default config / values
 	defaultAddress := ":8080"
 	if address != "" {
 		defaultAddress = address
 	}
 
-	return &ServerChi{
+	return &DefaultHTTP{
 		address: defaultAddress,
 	}
 }
 
-// ServerChi is the server using chi
-type ServerChi struct {
+// DefaultHTTP is the server using chi
+type DefaultHTTP struct {
 	// address is the address to listen on
 	address string
 }
 
 // Run runs the server
-func (s *ServerChi) Run() error {
+func (s *DefaultHTTP) Run() error {
 	// - db
 	jsonFile, err := os.Open("data/products.json")
 
