@@ -3,11 +3,12 @@ package application
 import (
 	"fmt"
 	"github.com/go-chi/chi/v5"
+	"go-web-bootcamp/internal"
 	"go-web-bootcamp/internal/handlers"
-	"io"
+	"go-web-bootcamp/internal/repository"
+	"go-web-bootcamp/internal/service"
 	"log"
 	"net/http"
-	"os"
 )
 
 func NewDefaultHTTP(address string) *DefaultHTTP {
@@ -30,37 +31,25 @@ type DefaultHTTP struct {
 
 // Run runs the server
 func (s *DefaultHTTP) Run() error {
-	// - db
-	jsonFile, err := os.Open("data/products.json")
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer jsonFile.Close()
-
-	byteValue, err := io.ReadAll(jsonFile)
-
+	// - repository
+	rp, err := repository.NewProductMap(make(map[int]internal.Product))
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// - service
+	sv := service.NewProductDefault(rp)
 	// Handler
-	hd, err := handlers.NewDefaultProducts(byteValue)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	jsonFile.Close()
+	hd := handlers.NewDefaultProducts(sv)
 
 	// - router
 	rt := chi.NewRouter()
 
 	// Endpoints
-	rt.Get("/ping", hd.Ping())
+	rt.Get("/products/{id}", hd.GetByID())
 	rt.Get("/products", hd.GetProducts())
+	rt.Get("/ping", hd.Ping())
 	rt.Post("/products", hd.Create())
-	rt.Get("/products/{id}", hd.GetProductById())
 	rt.Get("/products/search", hd.GetProductByPrice())
 
 	fmt.Println("Server is running...")
