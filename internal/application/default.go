@@ -46,11 +46,14 @@ func (s *DefaultHTTP) Run() error {
 	rt := chi.NewRouter()
 
 	// Endpoints
-	rt.Get("/products/{id}", hd.GetByID())
-	rt.Get("/products", hd.GetProducts())
 	rt.Get("/ping", hd.Ping())
-	rt.Post("/products", hd.Create())
-	rt.Get("/products/search", hd.GetProductByPrice())
+
+	rt.Route("/products", func(rt chi.Router) {
+		rt.Get("/", hd.GetProducts())
+		rt.Post("/", hd.Create())
+		rt.Get("/{id}", hd.GetByID())
+		rt.Get("/search", hd.GetProductByPrice())
+	})
 
 	fmt.Println("Server is running...")
 	return http.ListenAndServe(s.address, rt)
