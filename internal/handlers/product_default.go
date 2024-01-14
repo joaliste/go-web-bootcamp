@@ -280,3 +280,86 @@ func ValidateKeyExistence(mp map[string]any, keys ...string) (err error) {
 	}
 	return
 }
+
+func (d *DefaultProducts) UpdatePartial() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// request
+		// - get id from path
+		id, err := strconv.Atoi(chi.URLParam(r, "id"))
+		if err != nil {
+			response.Text(w, http.StatusBadRequest, "invalid id")
+			return
+		}
+
+		// - get the product from the service
+		product, err := d.sv.GetById(id)
+		if err != nil {
+			switch {
+			case errors.Is(err, internal.ErrProductNotFound):
+				response.Text(w, http.StatusNotFound, "product not found")
+			default:
+				response.Text(w, http.StatusInternalServerError, "internal server error")
+			}
+			return
+		}
+
+		// process
+		// - serialize internal.Product to BodyRequestProductJSON
+		reqBody := BodyRequestProductJSON{
+			Name:        product.Name,
+			Quantity:    product.Quantity,
+			CodeValue:   product.CodeValue,
+			IsPublished: product.IsPublished,
+			Expiration:  product.Expiration,
+			Price:       product.Price,
+		}
+
+		// - get body
+		if err := request.JSON(r, &reqBody); err != nil {
+			response.Text(w, http.StatusBadRequest, "invalid body")
+			return
+		}
+
+		// - serialize internal.Product
+		product = internal.Product{
+			Id:          id,
+			Name:        reqBody.Name,
+			Quantity:    reqBody.Quantity,
+			CodeValue:   reqBody.CodeValue,
+			IsPublished: reqBody.IsPublished,
+			Expiration:  reqBody.Expiration,
+			Price:       reqBody.Price,
+		}
+
+		// - update product
+		if err := d.sv.Update(&product); err != nil {
+			switch {
+			case errors.Is(err, internal.ErrProductNotFound):
+				response.Text(w, http.StatusNotFound, "product not found")
+			case errors.Is(err, internal.ErrFieldRequired), errors.Is(err, internal.ErrFieldFormat):
+				response.Text(w, http.StatusBadRequest, "invalid body")
+			default:
+				response.Text(w, http.StatusInternalServerError, "internal server error")
+			}
+			return
+		}
+
+		// response
+		// - deserialize ProductJSON
+		data := ProductJSON{
+			Id:          id,
+			Name:        reqBody.Name,
+			Quantity:    reqBody.Quantity,
+			CodeValue:   reqBody.CodeValue,
+			IsPublished: reqBody.IsPublished,
+			Expiration:  reqBody.Expiration,
+			Price:       reqBody.Price,
+		}
+
+		response.JSON(w, http.StatusOK, map[string]any{
+			"message": "product updated",
+			"data":    data,
+		})
+
+	}
+}
