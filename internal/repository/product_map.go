@@ -114,3 +114,15 @@ func (pm *ProductMap) ValidateProductCode(code string) (err error) {
 
 	return
 }
+
+func (pm *ProductMap) Update(product *internal.Product) (err error) {
+
+	_, ok := pm.db[(*product).Id]
+	if !ok {
+		err = internal.ErrProductNotFound
+		return
+	}
+
+	pm.db[(*product).Id] = *product
+	return
+}

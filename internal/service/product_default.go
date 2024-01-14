@@ -90,7 +90,23 @@ func ValidateBusinessRule(p *internal.Product) error {
 		return fmt.Errorf("%w: must be in dd/mm/Y format", internal.ErrFieldFormat)
 	}
 
-	// TODO: other verifications
-
 	return nil
+}
+
+func (m *ProductDefault) Update(product *internal.Product) (err error) {
+	// validate
+	if err = ValidateBusinessRule(product); err != nil {
+		return
+	}
+
+	// update product
+	err = m.rp.Update(product)
+	if err != nil {
+		switch {
+		case errors.Is(err, internal.ErrProductNotFound):
+			err = fmt.Errorf("%w: id", internal.ErrProductNotFound)
+		}
+		return
+	}
+	return
 }

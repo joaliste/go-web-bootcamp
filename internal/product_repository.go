@@ -12,4 +12,5 @@ type ProductRepository interface {
 	GetProducts() []Product
 	GetProductsByPrice(price float64) []Product
 	Save(product *Product) (err error)
+	Update(product *Product) (err error)
 }
