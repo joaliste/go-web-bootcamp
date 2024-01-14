@@ -54,6 +54,7 @@ func (s *DefaultHTTP) Run() error {
 		rt.Get("/{id}", hd.GetByID())
 		rt.Put("/{id}", hd.Update())
 		rt.Patch("/{id}", hd.UpdatePartial())
+		rt.Delete("/{id}", hd.Delete())
 		rt.Get("/search", hd.GetProductByPrice())
 	})
 

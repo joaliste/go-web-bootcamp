@@ -14,4 +14,5 @@ type ProductService interface {
 	GetProductsByPrice(price float64) []Product
 	Save(product *Product) (err error)
 	Update(product *Product) (err error)
+	Delete(id int) (err error)
 }

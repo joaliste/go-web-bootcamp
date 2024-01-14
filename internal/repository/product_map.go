@@ -126,3 +126,14 @@ func (pm *ProductMap) Update(product *internal.Product) (err error) {
 	pm.db[(*product).Id] = *product
 	return
 }
+
+func (pm *ProductMap) Delete(id int) (err error) {
+	_, ok := pm.db[id]
+	if !ok {
+		err = internal.ErrProductNotFound
+		return
+	}
+	delete(pm.db, id)
+
+	return
+}

@@ -93,14 +93,27 @@ func ValidateBusinessRule(p *internal.Product) error {
 	return nil
 }
 
-func (m *ProductDefault) Update(product *internal.Product) (err error) {
+func (p *ProductDefault) Update(product *internal.Product) (err error) {
 	// validate
 	if err = ValidateBusinessRule(product); err != nil {
 		return
 	}
 
 	// update product
-	err = m.rp.Update(product)
+	err = p.rp.Update(product)
+	if err != nil {
+		switch {
+		case errors.Is(err, internal.ErrProductNotFound):
+			err = fmt.Errorf("%w: id", internal.ErrProductNotFound)
+		}
+		return
+	}
+	return
+}
+
+func (p *ProductDefault) Delete(id int) (err error) {
+	// delete product
+	err = p.rp.Delete(id)
 	if err != nil {
 		switch {
 		case errors.Is(err, internal.ErrProductNotFound):

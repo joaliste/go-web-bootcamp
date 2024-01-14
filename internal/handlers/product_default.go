@@ -363,3 +363,31 @@ func (d *DefaultProducts) UpdatePartial() http.HandlerFunc {
 
 	}
 }
+
+func (d *DefaultProducts) Delete() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// request
+		// - get id from path
+		id, err := strconv.Atoi(chi.URLParam(r, "id"))
+		if err != nil {
+			response.Text(w, http.StatusBadRequest, "invalid id")
+			return
+		}
+
+		// process
+		// - delete product
+		if err := d.sv.Delete(id); err != nil {
+			switch {
+			case errors.Is(err, internal.ErrProductNotFound):
+				response.Text(w, http.StatusNotFound, "product not found")
+			default:
+				response.Text(w, http.StatusInternalServerError, "internal server error")
+			}
+			return
+		}
+
+		// response
+		response.Text(w, http.StatusNoContent, "product deleted")
+
+	}
+}
