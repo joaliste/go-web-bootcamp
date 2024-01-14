@@ -1,44 +1,18 @@
 package repository
 
 import (
-	"encoding/json"
 	"go-web-bootcamp/internal"
-	"io"
+	"go-web-bootcamp/internal/storage"
 	"log"
-	"os"
 )
 
 func NewProductMap(db map[int]internal.Product) (*ProductMap, error) {
-	// default config / values
-	jsonFile, err := os.Open("data/products.json")
+
+	db, err := storage.ReadJson(db, "data/products_updated.json")
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("could not read the data")
 	}
-	defer jsonFile.Close()
-
-	byteValue, err := io.ReadAll(jsonFile)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var products []internal.Product
-	err = json.Unmarshal(byteValue, &products)
-
-	for _, value := range products {
-		db[value.Id] = value
-	}
-
-	if err != nil {
-		return nil, err
-	}
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	jsonFile.Close()
 
 	return &ProductMap{
 		db:     db,
@@ -100,6 +74,12 @@ func (pm *ProductMap) Save(product *internal.Product) (err error) {
 	// store product
 	(*pm).db[(*product).Id] = *product
 
+	err = storage.WriteJson((*pm).db, "data/products_updated.json")
+
+	if err != nil {
+		return
+	}
+
 	return
 }
 
@@ -124,6 +104,13 @@ func (pm *ProductMap) Update(product *internal.Product) (err error) {
 	}
 
 	pm.db[(*product).Id] = *product
+
+	err = storage.WriteJson((*pm).db, "data/products_updated.json")
+
+	if err != nil {
+		return
+	}
+
 	return
 }
 
@@ -134,6 +121,12 @@ func (pm *ProductMap) Delete(id int) (err error) {
 		return
 	}
 	delete(pm.db, id)
+
+	err = storage.WriteJson(pm.db, "data/products_updated.json")
+
+	if err != nil {
+		return
+	}
 
 	return
 }
