@@ -41,7 +41,7 @@ func NewRequest(method, url string, body io.Reader, urlParams map[string]string,
 }
 
 func TestTaskDefault_GetProducts(t *testing.T) {
-	t.Run("success 01 - should return all the products", func(t *testing.T) {
+	t.Run("success - should return all the products", func(t *testing.T) {
 		// arrange
 		// - repository
 		db := map[int]internal.Product{
@@ -89,6 +89,44 @@ func TestTaskDefault_GetProducts(t *testing.T) {
 		// assert
 		expectedCode := http.StatusOK
 		expectedBody := `[{"id":1,"name":"test_1","quantity":123,"code_value":"test_code_1","is_published":false,"expiration":"02/02/2012","price":123},{"id":2,"name":"test_2","quantity":123,"code_value":"test_code_2","is_published":false,"expiration":"02/02/2012","price":123},{"id":3,"name":"test_3","quantity":123,"code_value":"test_code_3","is_published":false,"expiration":"02/02/2012","price":123}]`
+		expectedHeader := http.Header{"Content-Type": []string{"application/json"}}
+		require.Equal(t, expectedCode, res.Code)
+		require.JSONEq(t, expectedBody, res.Body.String())
+		require.Equal(t, expectedHeader, res.Header())
+	})
+}
+
+func TestTaskDefault_GetProductById(t *testing.T) {
+	t.Run("success 01 - should return a product", func(t *testing.T) {
+		// arrange
+		// - repository
+		db := map[int]internal.Product{
+			1: {
+				Id:          1,
+				Name:        "test_1",
+				Quantity:    123,
+				CodeValue:   "test_code_1",
+				IsPublished: false,
+				Expiration:  "02/02/2012",
+				Price:       123,
+			},
+		}
+		// repository
+		rp, _ := repository.NewProductMap(db)
+		// service
+		sv := service.NewProductDefault(rp)
+		// - handler
+		hd := NewDefaultProducts(sv)
+		hdFunc := hd.GetByID()
+
+		// act
+		req := NewRequest("GET", "/products/1", nil, map[string]string{"id": "1"}, nil)
+		res := httptest.NewRecorder()
+		hdFunc(res, req)
+
+		// assert
+		expectedCode := http.StatusOK
+		expectedBody := `{"data":{"id":1,"name":"test_1","quantity":123,"code_value":"test_code_1","is_published":false,"expiration":"02/02/2012","price":123},"message":"product found"}`
 		expectedHeader := http.Header{"Content-Type": []string{"application/json"}}
 		require.Equal(t, expectedCode, res.Code)
 		require.JSONEq(t, expectedBody, res.Body.String())
