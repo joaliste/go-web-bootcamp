@@ -10,7 +10,6 @@ import (
 	"go-web-bootcamp/platform/web/response"
 	"io"
 	"net/http"
-	"os"
 	"strconv"
 )
 
@@ -119,12 +118,12 @@ func (d *DefaultProducts) GetProductByPrice() http.HandlerFunc {
 
 func (d *DefaultProducts) Create() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		token := r.Header.Get("Authorization")
-
-		if token == "" || token != os.Getenv("API_TOKEN") {
-			response.Text(w, http.StatusUnauthorized, "unauthorized")
-			return
-		}
+		//token := r.Header.Get("Authorization")
+		//
+		//if token == "" || token != os.Getenv("API_TOKEN") {
+		//	response.Text(w, http.StatusUnauthorized, "unauthorized")
+		//	return
+		//}
 
 		var body internal.ProductRequestProductJSON
 
@@ -182,12 +181,12 @@ func (d *DefaultProducts) Create() http.HandlerFunc {
 func (d *DefaultProducts) Update() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// request
-		token := r.Header.Get("Authorization")
-
-		if token == "" || token != os.Getenv("API_TOKEN") {
-			response.Text(w, http.StatusUnauthorized, "unauthorized")
-			return
-		}
+		//token := r.Header.Get("Authorization")
+		//
+		//if token == "" || token != os.Getenv("API_TOKEN") {
+		//	response.Text(w, http.StatusUnauthorized, "unauthorized")
+		//	return
+		//}
 		// - get id from path
 		id, err := strconv.Atoi(chi.URLParam(r, "id"))
 		if err != nil {
@@ -288,12 +287,12 @@ func ValidateKeyExistence(mp map[string]any, keys ...string) (err error) {
 func (d *DefaultProducts) UpdatePartial() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// request
-		token := r.Header.Get("Authorization")
-
-		if token == "" || token != os.Getenv("API_TOKEN") {
-			response.Text(w, http.StatusUnauthorized, "unauthorized")
-			return
-		}
+		//token := r.Header.Get("Authorization")
+		//
+		//if token == "" || token != os.Getenv("API_TOKEN") {
+		//	response.Text(w, http.StatusUnauthorized, "unauthorized")
+		//	return
+		//}
 		// - get id from path
 		id, err := strconv.Atoi(chi.URLParam(r, "id"))
 		if err != nil {
@@ -377,12 +376,12 @@ func (d *DefaultProducts) UpdatePartial() http.HandlerFunc {
 func (d *DefaultProducts) Delete() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// request
-		token := r.Header.Get("Authorization")
-
-		if token == "" || token != os.Getenv("API_TOKEN") {
-			response.Text(w, http.StatusUnauthorized, "unauthorized")
-			return
-		}
+		//token := r.Header.Get("Authorization")
+		//
+		//if token == "" || token != os.Getenv("API_TOKEN") {
+		//	response.Text(w, http.StatusUnauthorized, "unauthorized")
+		//	return
+		//}
 		// - get id from path
 		id, err := strconv.Atoi(chi.URLParam(r, "id"))
 		if err != nil {

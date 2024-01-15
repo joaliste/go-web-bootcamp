@@ -6,10 +6,12 @@ import (
 	"log"
 )
 
+const FilePath = "/Users/joaliste/Desktop/Meli/Bootcamp GO/Repositories/go-web-bootcamp/data/products_updated.json"
+
 func NewProductMap(db map[int]internal.Product) (*ProductMap, error) {
 
 	if len(db) == 0 {
-		_, err := storage.ReadJson(db, "data/products_updated.json")
+		_, err := storage.ReadJson(db, FilePath)
 		if err != nil {
 			log.Fatal("could not read the data")
 		}
@@ -75,7 +77,7 @@ func (pm *ProductMap) Save(product *internal.Product) (err error) {
 	// store product
 	(*pm).db[(*product).Id] = *product
 
-	err = storage.WriteJson((*pm).db, "data/products_updated.json")
+	err = storage.WriteJson((*pm).db, FilePath)
 
 	if err != nil {
 		return
@@ -106,7 +108,7 @@ func (pm *ProductMap) Update(product *internal.Product) (err error) {
 
 	pm.db[(*product).Id] = *product
 
-	err = storage.WriteJson((*pm).db, "data/products_updated.json")
+	err = storage.WriteJson((*pm).db, FilePath)
 
 	if err != nil {
 		return
@@ -123,7 +125,7 @@ func (pm *ProductMap) Delete(id int) (err error) {
 	}
 	delete(pm.db, id)
 
-	err = storage.WriteJson(pm.db, "data/products_updated.json")
+	err = storage.WriteJson(pm.db, FilePath)
 
 	if err != nil {
 		return
