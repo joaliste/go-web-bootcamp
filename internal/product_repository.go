@@ -9,7 +9,7 @@ var (
 
 type ProductRepository interface {
 	GetById(id int) (Product, error)
-	GetProducts() []Product
+	GetProducts() []ProductJSON
 	GetProductsByPrice(price float64) []Product
 	Save(product *Product) (err error)
 	Update(product *Product) (err error)

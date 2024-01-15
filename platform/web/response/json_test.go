@@ -1,7 +1,7 @@
 package response_test
 
 import (
-	"app/put/platform/web/response"
+	"go-web-bootcamp/platform/web/response"
 	"net/http"
 	"net/http/httptest"
 	"testing"

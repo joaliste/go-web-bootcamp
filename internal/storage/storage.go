@@ -22,11 +22,11 @@ func ReadJson(db map[int]internal.Product, path string) (map[int]internal.Produc
 		log.Fatal(err)
 	}
 
-	var products []internal.Product
+	var products []internal.ProductJSON
 	err = json.Unmarshal(byteValue, &products)
 
 	for _, value := range products {
-		db[value.Id] = value
+		db[value.Id] = internal.Product(value)
 	}
 
 	if err != nil {
@@ -39,10 +39,11 @@ func ReadJson(db map[int]internal.Product, path string) (map[int]internal.Produc
 }
 
 func WriteJson(db map[int]internal.Product, path string) error {
-	var products []internal.Product
+	var products []internal.ProductJSON
 
 	for _, value := range db {
-		products = append(products, value)
+		valueJSON := internal.ProductJSON(value)
+		products = append(products, valueJSON)
 	}
 
 	bytes, err := json.Marshal(products)

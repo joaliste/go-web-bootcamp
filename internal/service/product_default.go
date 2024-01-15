@@ -31,7 +31,7 @@ func (p *ProductDefault) GetById(id int) (internal.Product, error) {
 	return product, nil
 }
 
-func (p *ProductDefault) GetProducts() []internal.Product {
+func (p *ProductDefault) GetProducts() []internal.ProductJSON {
 	products := p.rp.GetProducts()
 
 	return products

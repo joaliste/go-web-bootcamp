@@ -8,10 +8,11 @@ import (
 
 func NewProductMap(db map[int]internal.Product) (*ProductMap, error) {
 
-	db, err := storage.ReadJson(db, "data/products_updated.json")
-
-	if err != nil {
-		log.Fatal("could not read the data")
+	if len(db) == 0 {
+		_, err := storage.ReadJson(db, "data/products_updated.json")
+		if err != nil {
+			log.Fatal("could not read the data")
+		}
 	}
 
 	return &ProductMap{
@@ -36,11 +37,11 @@ func (pm *ProductMap) GetById(id int) (internal.Product, error) {
 	return product, nil
 }
 
-func (pm *ProductMap) GetProducts() []internal.Product {
-	var products []internal.Product
+func (pm *ProductMap) GetProducts() []internal.ProductJSON {
+	var products []internal.ProductJSON
 
 	for _, value := range pm.db {
-		products = append(products, value)
+		products = append(products, internal.ProductJSON(value))
 	}
 
 	return products

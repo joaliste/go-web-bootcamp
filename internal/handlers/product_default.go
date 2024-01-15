@@ -18,16 +18,6 @@ type DefaultProducts struct {
 	sv internal.ProductService
 }
 
-type ProductJSON struct {
-	Id          int     `json:"id"`
-	Name        string  `json:"name"`
-	Quantity    int     `json:"quantity"`
-	CodeValue   string  `json:"code_value"`
-	IsPublished bool    `json:"is_published"`
-	Expiration  string  `json:"expiration"`
-	Price       float64 `json:"price"`
-}
-
 type BodyRequestProductJSON struct {
 	Name        string  `json:"name"`
 	Quantity    int     `json:"quantity"`
@@ -66,7 +56,7 @@ func (d *DefaultProducts) GetByID() http.HandlerFunc {
 		}
 
 		// response
-		data := ProductJSON{
+		data := internal.ProductJSON{
 			Id:          product.Id,
 			Name:        product.Name,
 			Quantity:    product.Quantity,
@@ -166,7 +156,7 @@ func (d *DefaultProducts) Create() http.HandlerFunc {
 
 		// response
 		// - deserialize ProductJSON
-		data := ProductJSON{
+		data := internal.ProductJSON{
 			Id:          product.Id,
 			Name:        product.Name,
 			Quantity:    product.Quantity,
@@ -268,7 +258,7 @@ func (d *DefaultProducts) Update() http.HandlerFunc {
 
 		// response
 		// - deserialize ProductJSON
-		data := ProductJSON{
+		data := internal.ProductJSON{
 			Id:          product.Id,
 			Name:        product.Name,
 			Quantity:    product.Quantity,
@@ -366,7 +356,7 @@ func (d *DefaultProducts) UpdatePartial() http.HandlerFunc {
 
 		// response
 		// - deserialize ProductJSON
-		data := ProductJSON{
+		data := internal.ProductJSON{
 			Id:          id,
 			Name:        reqBody.Name,
 			Quantity:    reqBody.Quantity,

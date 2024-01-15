@@ -1,7 +1,7 @@
 package request_test
 
 import (
-	"app/put/platform/web/request"
+	"go-web-bootcamp/platform/web/request"
 	"io"
 	"net/http"
 	"strings"
